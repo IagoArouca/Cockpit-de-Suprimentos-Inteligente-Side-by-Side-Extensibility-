@@ -18,12 +18,14 @@
     "@sap-cloud-sdk/resilience": "^4"
   },
   "devDependencies": {
-    "@sap/cds-dk": "^8.9.0"
+    "@sap/cds-dk": "^8.9.0",
+    "cds-plugin-ui5": "^0.13.0"
   },
   "scripts": {
     "start": "cds-serve",
     "watch": "cds watch",
-    "build": "cds build"
+    "build": "cds build",
+    "watch-avaliacoes": "cds watch --open com.senior.suprimentos.avaliacoes/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "cds": {
     "requires": {
@@ -38,5 +40,11 @@
     "features": {
       "fetch_csrf": true
     }
-  }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/avaliacoes"
+  ]
 }

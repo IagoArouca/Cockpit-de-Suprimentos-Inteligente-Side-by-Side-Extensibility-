@@ -1,0 +1,159 @@
+{
+  "_version": "1.83.0",
+  "sap.app": {
+    "id": "com.senior.suprimentos.avaliacoes",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.22.0",
+      "toolsId": "c4a2ec01-b300-48cc-b99b-988637289ffa"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/suprimentos/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Fornecedor-analisar": {
+          "semanticObject": "Fornecedor",
+          "action": "analisar",
+          "title": "{{Fornecedor-analisar.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.146.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.senior.suprimentos.avaliacoes.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "AvaliacoesFornecedorList",
+          "target": "AvaliacoesFornecedorList"
+        },
+        {
+          "pattern": "AvaliacoesFornecedor({key}):?query:",
+          "name": "AvaliacoesFornecedorObjectPage",
+          "target": "AvaliacoesFornecedorObjectPage"
+        }
+      ],
+      "targets": {
+        "AvaliacoesFornecedorList": {
+          "type": "Component",
+          "id": "AvaliacoesFornecedorList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/AvaliacoesFornecedor",
+              "variantManagement": "Page",
+              "navigation": {
+                "AvaliacoesFornecedor": {
+                  "detail": {
+                    "route": "AvaliacoesFornecedorObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "AvaliacoesFornecedorObjectPage": {
+          "type": "Component",
+          "id": "AvaliacoesFornecedorObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/AvaliacoesFornecedor"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}
