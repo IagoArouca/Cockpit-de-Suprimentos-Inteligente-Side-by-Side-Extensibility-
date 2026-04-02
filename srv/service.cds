@@ -3,6 +3,8 @@ using { API_BUSINESS_PARTNER as external } from '../srv/external/API_BUSINESS_PA
 
 
 service SuprimentosService {
+
+    @odata.draft.enabled : true
     entity AvaliacoesFornecedor as projection on my.AvaliacoesFornecedor;
 
     @reandonly
