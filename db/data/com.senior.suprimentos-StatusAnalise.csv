@@ -1,0 +1,5 @@
+status;name;descr
+NOVO;Novo;Aguardando início da análise técnica
+EM_ANALISE;Em Análise;O fornecedor está sendo avaliado pelo departamento
+APROVADO;Aprovado;Fornecedor qualificado para participar de licitações
+REPROVADO;Reprovado;Fornecedor não atende aos requisitos de compliance

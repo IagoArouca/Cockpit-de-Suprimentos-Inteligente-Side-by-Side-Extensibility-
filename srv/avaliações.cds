@@ -55,3 +55,13 @@ annotate service.AvaliacoesFornecedor with {
         ],
     }
 };
+
+annotate service.AvaliacoesFornecedor with {
+    statusAnalise @Common.ValueListWithFixedValues : true;
+};
+
+annotate service.AvaliacoesFornecedor with {
+    businessPartner @Common.Text : businessPartner.BusinessPartnerFullName
+                    @Common.TextArrangement : #TextFirst;
+};
+
