@@ -16,6 +16,19 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
         this.before(['CREATE', 'UPDATE'], AvaliacoesFornecedor, req => {
             this.validateEvaluation(req)
         })
+        this.after('CREATE', AvaliacoesFornecedor, (data, req) => this.sendCriticalAlertEmail(data, req))
+
+        this.after('READ', AvaliacoesFornecedor, each => {
+            if (each.notaDesempenho >= 4) {
+                each.criticality = 3
+            } else if (each.notaDesempenho === 3) {
+                each.criticality = 2
+            } else if (each.notaDesempenho <=2 ) {
+                each.criticality = 1
+            } else { 
+                each.criticality = 0
+            }
+        })
 
         await super.init()
     }
@@ -45,6 +58,22 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
 
         if (notaDesempenho <=2 && (!comentarios || comentarios.length < 10)) {
             return req.reject(400, 'Para notas iguais ou inferiores a 2, é obrigatório um parecer detalhado do comprador.', 'comentarios')
+        }
+    }
+
+    async sendCriticalAlertEmail(data, req) {
+        const LOG = cds.log('suprimentos')
+        console.log("✨ Evento disparado:", req.event)
+        const { notaDesempenho, businessPartner_BusinessPartner } = data
+
+        if (notaDesempenho <= 2) {
+            const fornecedor = data.businessPartner?.BusinessPartnerFullName || businessPartner_BusinessPartner
+            
+            LOG.warn(`⚠️  ALERTA DE QUALIDADE: Fornecedor ${fornecedor} recebeu nota ${notaDesempenho}`)
+            LOG.info(`📧 [Simulação Email] Destinatário: gerente.compras@empresa.com`)
+            LOG.info(`   Assunto: NOTIFICAÇÃO DE BAIXA PERFORMANCE - Fornecedor ${businessPartner_BusinessPartner}`)
+            LOG.info(`   Corpo: Prezado Gerente, uma nova avaliação com nota ${notaDesempenho} foi registrada.`)
+            LOG.info(`✅ Log de envio gerado com sucesso.`)
         }
     }
 }

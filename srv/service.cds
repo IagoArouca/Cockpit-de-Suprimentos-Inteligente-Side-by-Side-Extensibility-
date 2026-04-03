@@ -5,7 +5,10 @@ using { API_BUSINESS_PARTNER as external } from '../srv/external/API_BUSINESS_PA
 service SuprimentosService {
 
     @odata.draft.enabled : true
-    entity AvaliacoesFornecedor as projection on my.AvaliacoesFornecedor;
+    entity AvaliacoesFornecedor as projection on my.AvaliacoesFornecedor{
+        *,
+        virtual null as criticality : Integer
+    }
 
     @reandonly
     entity FornecedoresS4 as projection on external.A_BusinessPartner {
