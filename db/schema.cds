@@ -8,7 +8,7 @@ entity AvaliacoesFornecedor : managed, cuid {
     businessPartner  : Association to external.A_BusinessPartner;
     notaDesempenho   : Integer @assert.range: [1, 5];
     comentarios      : String(1000);
-    statusAnalise    : Association to StatusAnalise
+    statusAnalise    : Association to StatusAnalise default 'NOVO';
 
 }
 
