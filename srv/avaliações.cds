@@ -7,6 +7,7 @@ annotate service.AvaliacoesFornecedor with @(
         { $Type : 'UI.DataField', Label : 'Nota (1-5)', Value : notaDesempenho, Criticality : criticality },
         { $Type : 'UI.DataField', Label : 'Status', Value : statusAnalise_status },
         { $Type : 'UI.DataField', Label : 'Data de Avaliação', Value : createdAt },
+        { $Type : 'UI.DataField', Value : proximaRevisao, Label : 'Próxima Revisão' },
         { $Type : 'UI.DataField', Label : 'Comentários', Value : comentarios }
     ],
     UI.HeaderInfo : {
@@ -68,6 +69,6 @@ annotate service.AvaliacoesFornecedor with {
 annotate service.AvaliacoesFornecedor @Common.SideEffects : {
     $Type : 'Common.SideEffectsType',
     SourceProperties : [ notaDesempenho ],
-    TargetProperties : [ criticality ]
+    TargetProperties : [ criticality, proximaRevisao ]
 };
 

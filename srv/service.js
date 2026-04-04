@@ -58,8 +58,9 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
     async validateDelete(req) {
         const { AvaliacoesFornecedor } = this.entities
         const evaluation = await SELECT.one.from(AvaliacoesFornecedor).where({ ID: req.params[0].ID })
-        if( evaluation && evaluation.statusAnalise_status === 'FINALIZADO') {
-            return req.reject(403, '❌ Operação não permitida: Avaliações com status FINALIZADO não podem ser excluídas por questões de auditoria.')
+        const statusBloqueados = ['APROVADO', 'REPROVADO']
+        if ( evaluation && statusBloqueados.includes(evaluation.statusAnalise_status) ) {
+            return req.reject(403, `❌ Auditoria: Não é permitido excluir avaliações com status ${evaluation.statusAnalise_status}.`)
         }
     }
 
@@ -96,6 +97,14 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
             else if (item.notaDesempenho === 3) item.criticality = 2
             else if (item.notaDesempenho <=2 ) item.criticality = 1
             else item.criticality = 0
+
+            if(item.createdAt) {
+                let dataCriacao = new Date(item.createdAt)
+                let diasParaAdicionar = item.notaDesempenho <= 2 ? 30 : 180
+
+                dataCriacao.setDate(dataCriacao.getDate() + diasParaAdicionar)
+                item.proximaRevisao = dataCriacao.toISOString().split('T')[0]
+            }
         })
     }
 }
