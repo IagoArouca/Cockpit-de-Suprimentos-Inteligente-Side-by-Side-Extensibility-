@@ -7,7 +7,9 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
         const LOG = cds.log('suprimentos')
         LOG.info('Iniciando o serviço de suprimentos...')
 
-        const { AvaliacoesFornecedor } = this.entities;
+        const { AvaliacoesFornecedor, FornecedoresS4 } = this.entities;
+
+        this.on('READ', FornecedoresS4, (req, next) => this.handleS4Integration(req, next))
 
         this.before(['NEW', 'CREATE', 'UPDATE'], AvaliacoesFornecedor, req => {
             this.setInitialStatus(req)
@@ -18,17 +20,7 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
         })
         this.after('CREATE', AvaliacoesFornecedor, (data, req) => this.sendCriticalAlertEmail(data, req))
 
-        this.after('READ', AvaliacoesFornecedor, each => {
-            if (each.notaDesempenho >= 4) {
-                each.criticality = 3
-            } else if (each.notaDesempenho === 3) {
-                each.criticality = 2
-            } else if (each.notaDesempenho <=2 ) {
-                each.criticality = 1
-            } else { 
-                each.criticality = 0
-            }
-        })
+        this.after('READ', AvaliacoesFornecedor, each => this.calculateCriticality(each))
 
         await super.init()
     }
@@ -75,5 +67,25 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
             LOG.info(`   Corpo: Prezado Gerente, uma nova avaliação com nota ${notaDesempenho} foi registrada.`)
             LOG.info(`✅ Log de envio gerado com sucesso.`)
         }
+    }
+
+    async handleS4Integration(req, next) {
+        try {
+            return await next()
+        } catch (error) {
+            const LOG = cds.log('suprimentos')
+            LOG.error('❌ Falha Crítica na API S/4HANA:', error.message)
+            return req.error(503, 'Serviço de Fornecedores S/4HANA indisponível. Tente novamente mais tarde.')
+        }
+    }
+
+    calculateCriticality(data) {
+        const assessments = Array.isArray(data) ? data : [data]
+        assessments.forEach(item => {
+            if (item.notaDesempenho >=4 ) item.criticality = 3
+            else if (item.notaDesempenho === 3) item.criticality = 2
+            else if (item.notaDesempenho <=2 ) item.criticality = 1
+            else item.criticality = 0
+        })
     }
 }
