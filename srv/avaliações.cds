@@ -5,10 +5,9 @@ annotate service.AvaliacoesFornecedor with @(
     UI.LineItem : [
         { $Type : 'UI.DataField', Label : 'Fornecedor', Value : businessPartner_BusinessPartner },
         { $Type : 'UI.DataField', Label : 'Nota (1-5)', Value : notaDesempenho, Criticality : criticality },
-        { $Type : 'UI.DataField', Label : 'Status', Value : statusAnalise_status },
+        { $Type : 'UI.DataField', Label : 'Status', Value : statusAnalise_status, Criticality : statusCriticality  },
         { $Type : 'UI.DataField', Label : 'Data de Avaliação', Value : createdAt },
-        { $Type : 'UI.DataField', Value : proximaRevisao, Label : 'Próxima Revisão' },
-        { $Type : 'UI.DataField', Label : 'Comentários', Value : comentarios }
+        { $Type : 'UI.DataField', Value : proximaRevisao, Label : 'Próxima Revisão' }
     ],
     UI.HeaderInfo : {
         TypeName : 'Avaliação',
@@ -36,12 +35,7 @@ annotate service.AvaliacoesFornecedor with @(
     UI.DataPoint #StatusHeader : {
         Value : statusAnalise_status,
         Title : 'Status Atual',
-         @UI.CriticalityMapping : [
-            { Value : 'NOVO', Criticality : 0 },
-            { Value : 'EM_ANALISE', Criticality : 0 },
-            { Value : 'APROVADO', Criticality : 3 },
-            { Value : 'REPROVADO', Criticality : 1 }
-        ]        
+        Criticality : statusCriticality 
     },
 
     UI.Facets : [

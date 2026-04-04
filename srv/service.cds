@@ -8,7 +8,8 @@ service SuprimentosService {
     entity AvaliacoesFornecedor as projection on my.AvaliacoesFornecedor{
         *,
         virtual null as criticality : Integer,
-        virtual null as proximaRevisao : Date
+        virtual null as proximaRevisao : Date,
+        virtual null as statusCriticality : Integer
     }
 
     @reandonly

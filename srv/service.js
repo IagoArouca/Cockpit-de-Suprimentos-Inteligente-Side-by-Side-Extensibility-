@@ -105,6 +105,11 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
                 dataCriacao.setDate(dataCriacao.getDate() + diasParaAdicionar)
                 item.proximaRevisao = dataCriacao.toISOString().split('T')[0]
             }
+
+            if(item.statusAnalise_status === 'APROVADO') item.statusCriticality = 3
+            else if(item.statusAnalise_status === 'REPROVADO') item.statusCriticality = 1
+            else if(item.statusAnalise_status === 'EM_ANALISE') item.statusCriticality = 2
+            else item.statusCriticality = 5
         })
     }
 }
