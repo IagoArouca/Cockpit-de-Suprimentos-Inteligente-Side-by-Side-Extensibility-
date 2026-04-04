@@ -46,6 +46,7 @@ annotate service.AvaliacoesFornecedor with @(
             Criticality : #Positive,
 
             @UI.Hidden : { $edmJson: { $Or: [
+                { $Not: { $Path: 'IsActiveEntity' } },
                 { $Eq: [ { $Path: 'statusAnalise_status' }, 'APROVADO' ] },
                 { $Eq: [ { $Path: 'statusAnalise_status' }, 'REPROVADO' ] }
             ]}}
@@ -57,6 +58,7 @@ annotate service.AvaliacoesFornecedor with @(
             Criticality : #Negative,
 
             @UI.Hidden : { $edmJson: { $Or: [
+                { $Not: { $Path: 'IsActiveEntity' } },
                 { $Eq: [ { $Path: 'statusAnalise_status' }, 'APROVADO' ] },
                 { $Eq: [ { $Path: 'statusAnalise_status' }, 'REPROVADO' ] }
             ]}}

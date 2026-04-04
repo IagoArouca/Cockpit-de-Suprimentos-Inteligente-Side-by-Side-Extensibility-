@@ -117,15 +117,17 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
     }
     
     async handleStatusChange(req, novoStatus) {
+        console.log("✨ Evento disparado:", 'Atualizando status')
         const { AvaliacoesFornecedor } = this.entities;
         const id = req.params[0].ID;
 
-        await UPDATE(AvaliacoesFornecedor, id).with({ statusAnalise_status: novoStatus })
-
-        if(novoStatus === 'REPROVADO') {
-            console.log("📢 Notificando fornecedor sobre a reprovação...");
+        const evaluationsearch = await SELECT.one.from(AvaliacoesFornecedor).where({ID: id});
+    
+        if (novoStatus === 'APROVADO' && (!evaluationsearch.notaDesempenho || evaluationsearch.notaDesempenho < 3)) {
+            return req.error(400, '❌ Não é permitido aprovar um fornecedor com nota inferior a 3.');
         }
 
+        await UPDATE(AvaliacoesFornecedor, id).with({ statusAnalise_status: novoStatus });
         return req.reply();
     }
 }
