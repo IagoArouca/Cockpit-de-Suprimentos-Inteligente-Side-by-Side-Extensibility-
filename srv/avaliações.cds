@@ -38,6 +38,31 @@ annotate service.AvaliacoesFornecedor with @(
         Criticality : statusCriticality 
     },
 
+    UI.Identification : [
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action : 'service.aprovar',
+            Label : 'Aprovar',
+            Criticality : #Positive,
+
+            @UI.Hidden : { $edmJson: { $Or: [
+                { $Eq: [ { $Path: 'statusAnalise_status' }, 'APROVADO' ] },
+                { $Eq: [ { $Path: 'statusAnalise_status' }, 'REPROVADO' ] }
+            ]}}
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action : 'service.reprovar',
+            Label : 'Reprovar',
+            Criticality : #Negative,
+
+            @UI.Hidden : { $edmJson: { $Or: [
+                { $Eq: [ { $Path: 'statusAnalise_status' }, 'APROVADO' ] },
+                { $Eq: [ { $Path: 'statusAnalise_status' }, 'REPROVADO' ] }
+            ]}}
+        }
+    ],
+
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
@@ -89,6 +114,13 @@ annotate service.AvaliacoesFornecedor with @(
     }
 );
 
+annotate service.AvaliacoesFornecedor with @(
+    UI.UpdateHidden : { $edmJson: { $Or: [
+        { $Eq: [ { $Path: 'statusAnalise_status' }, 'APROVADO' ] },
+        { $Eq: [ { $Path: 'statusAnalise_status' }, 'REPROVADO' ] }
+    ]}}
+);
+
 annotate service.AvaliacoesFornecedor with {
     businessPartner @Common.ValueList : {
         $Type : 'Common.ValueListType',
@@ -123,6 +155,11 @@ annotate service.AvaliacoesFornecedor with {
 annotate service.AvaliacoesFornecedor @Common.SideEffects : {
     $Type : 'Common.SideEffectsType',
     SourceProperties : [ notaDesempenho ],
-    TargetProperties : [ criticality, proximaRevisao ]
+    TargetProperties : [ criticality, proximaRevisao, statusCriticality ]
+};
+
+annotate service.AvaliacoesFornecedor @Common.SideEffects #ActionRefreshes : {
+    SourceEntities : [ ],
+    TargetProperties : [ statusAnalise_status, statusCriticality, criticality ]
 };
 

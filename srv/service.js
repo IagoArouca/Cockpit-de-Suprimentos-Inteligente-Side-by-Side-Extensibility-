@@ -1,4 +1,5 @@
 const cds = require('@sap/cds');
+const { UPDATE } = require('@sap/cds/lib/ql/cds-ql');
 
 module.exports = class SuprimentosService extends cds.ApplicationService {
 
@@ -10,6 +11,8 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
         const { AvaliacoesFornecedor, FornecedoresS4 } = this.entities;
 
         this.on('READ', FornecedoresS4, (req, next) => this.handleS4Integration(req, next))
+        this.on('aprovar', 'AvaliacoesFornecedor', req => this.handleStatusChange(req, 'APROVADO'));
+        this.on('reprovar', 'AvaliacoesFornecedor', req => this.handleStatusChange(req, 'REPROVADO'));
 
         this.before(['NEW', 'CREATE', 'UPDATE'], AvaliacoesFornecedor, req => {
             this.setInitialStatus(req)
@@ -111,5 +114,18 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
             else if(item.statusAnalise_status === 'EM_ANALISE') item.statusCriticality = 2
             else item.statusCriticality = 5
         })
+    }
+    
+    async handleStatusChange(req, novoStatus) {
+        const { AvaliacoesFornecedor } = this.entities;
+        const id = req.params[0].ID;
+
+        await UPDATE(AvaliacoesFornecedor, id).with({ statusAnalise_status: novoStatus })
+
+        if(novoStatus === 'REPROVADO') {
+            console.log("📢 Notificando fornecedor sobre a reprovação...");
+        }
+
+        return req.reply();
     }
 }

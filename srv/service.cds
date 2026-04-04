@@ -10,6 +10,15 @@ service SuprimentosService {
         virtual null as criticality : Integer,
         virtual null as proximaRevisao : Date,
         virtual null as statusCriticality : Integer
+    } actions {
+
+        @cds.odata.bindingparameter.name : '_it'
+        @Common.SideEffects : { TargetProperties : ['_it/statusAnalise_status', '_it/statusCriticality'] }
+        action aprovar();
+
+        @cds.odata.bindingparameter.name : '_it'
+        @Common.SideEffects : { TargetProperties : ['_it/statusAnalise_status', '_it/statusCriticality'] }
+        action reprovar();
     }
 
     @reandonly
