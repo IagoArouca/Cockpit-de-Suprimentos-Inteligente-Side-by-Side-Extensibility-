@@ -22,6 +22,8 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
 
         this.after('READ', AvaliacoesFornecedor, each => this.calculateCriticality(each))
 
+        this.before('DELETE', AvaliacoesFornecedor, req => this.validateDelete(req))
+
         await super.init()
     }
 
@@ -50,6 +52,14 @@ module.exports = class SuprimentosService extends cds.ApplicationService {
 
         if (notaDesempenho <=2 && (!comentarios || comentarios.length < 10)) {
             return req.reject(400, 'Para notas iguais ou inferiores a 2, é obrigatório um parecer detalhado do comprador.', 'comentarios')
+        }
+    }
+
+    async validateDelete(req) {
+        const { AvaliacoesFornecedor } = this.entities
+        const evaluation = await SELECT.one.from(AvaliacoesFornecedor).where({ ID: req.params[0].ID })
+        if( evaluation && evaluation.statusAnalise_status === 'FINALIZADO') {
+            return req.reject(403, '❌ Operação não permitida: Avaliações com status FINALIZADO não podem ser excluídas por questões de auditoria.')
         }
     }
 

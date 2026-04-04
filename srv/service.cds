@@ -7,7 +7,8 @@ service SuprimentosService {
     @odata.draft.enabled : true
     entity AvaliacoesFornecedor as projection on my.AvaliacoesFornecedor{
         *,
-        virtual null as criticality : Integer
+        virtual null as criticality : Integer,
+        virtual null as proximaRevisao : Date
     }
 
     @reandonly

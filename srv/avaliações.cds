@@ -3,7 +3,7 @@ using SuprimentosService as service from './service';
 annotate service.AvaliacoesFornecedor with @(
     UI.SelectionFields : [ businessPartner_BusinessPartner, statusAnalise_status ], 
     UI.LineItem : [
-        { $Type : 'UI.DataField', Label : 'ID Fornecedor', Value : businessPartner_BusinessPartner },
+        { $Type : 'UI.DataField', Label : 'Fornecedor', Value : businessPartner_BusinessPartner },
         { $Type : 'UI.DataField', Label : 'Nota (1-5)', Value : notaDesempenho, Criticality : criticality },
         { $Type : 'UI.DataField', Label : 'Status', Value : statusAnalise_status },
         { $Type : 'UI.DataField', Label : 'Data de Avaliação', Value : createdAt },
@@ -63,5 +63,11 @@ annotate service.AvaliacoesFornecedor with {
 annotate service.AvaliacoesFornecedor with {
     businessPartner @Common.Text : businessPartner.BusinessPartnerFullName
                     @Common.TextArrangement : #TextFirst;
+};
+
+annotate service.AvaliacoesFornecedor @Common.SideEffects : {
+    $Type : 'Common.SideEffectsType',
+    SourceProperties : [ notaDesempenho ],
+    TargetProperties : [ criticality ]
 };
 
