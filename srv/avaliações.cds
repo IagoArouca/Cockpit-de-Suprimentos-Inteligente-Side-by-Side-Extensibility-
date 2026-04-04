@@ -13,24 +13,84 @@ annotate service.AvaliacoesFornecedor with @(
     UI.HeaderInfo : {
         TypeName : 'Avaliação',
         TypeNamePlural : 'Avaliações de Fornecedores',
-        Title : { Value : businessPartner_BusinessPartner },
-        Description : { Value : 'Análise detalhada de performance' }
+        Title : { Value : businessPartner.BusinessPartnerFullName }, 
+        Description : { Value : businessPartner_BusinessPartner }  
     },
+
+    UI.HeaderFacets : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.DataPoint#NotaHeader',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.DataPoint#StatusHeader',
+        }
+    ],
+
+    UI.DataPoint #NotaHeader : {
+        Value : notaDesempenho,
+        Title : 'Nota de Desempenho',
+        Criticality : criticality
+    },
+    UI.DataPoint #StatusHeader : {
+        Value : statusAnalise_status,
+        Title : 'Status Atual',
+         @UI.CriticalityMapping : [
+            { Value : 'NOVO', Criticality : 0 },
+            { Value : 'EM_ANALISE', Criticality : 0 },
+            { Value : 'APROVADO', Criticality : 3 },
+            { Value : 'REPROVADO', Criticality : 1 }
+        ]        
+    },
+
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
-            ID : 'InfoGeral',
-            Label : 'Informações da Avaliação',
-            Target : '@UI.FieldGroup#Detalhes'
+            ID : 'SessaoDadosFornecedor',
+            Label : 'Dados do Fornecedor',
+            Target : '@UI.FieldGroup#DadosBP'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID : 'SessaoAvaliacao',
+            Label : 'Detalhes da Avaliação',
+            Target : '@UI.FieldGroup#DetalhesAvaliacao'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID : 'SessaoPlanejamento',
+            Label : 'Planejamento e Auditoria',
+            Target : '@UI.FieldGroup#Admin'
         }
     ],
-    UI.FieldGroup #Detalhes : {
-        $Type : 'UI.FieldGroupType',
+
+    UI.FieldGroup #DadosBP : {
         Data : [
-            { Value : businessPartner_BusinessPartner, Label : 'Fornecedor' },
-            { Value : notaDesempenho, Label : 'Nota de Desempenho' },
+            { Value : businessPartner_BusinessPartner, Label : 'Código BP' },
+            { Value : businessPartner.BusinessPartnerFullName, Label : 'Nome Completo' },
+            { Value : businessPartner.BusinessPartnerGrouping, Label : 'Grupo de Conta' }
+        ]
+    },
+
+    UI.FieldGroup #DetalhesAvaliacao : {
+        Data : [
+            { Value : notaDesempenho, Label : 'Nota (1-5)', Criticality : criticality },
             { Value : statusAnalise_status, Label : 'Status da Análise' },
-            { Value : comentarios, Label : 'Parecer do Comprador' }
+            { 
+                $Type : 'UI.DataField', 
+                Value : comentarios, 
+                Label : 'Parecer Técnico',
+                @UI.MultiLineText : true 
+            }
+        ]
+    },
+
+    UI.FieldGroup #Admin : {
+        Data : [
+            { Value : createdAt, Label : 'Data de Criação' },
+            { Value : proximaRevisao, Label : 'Data da Próxima Revisão' },
+            { Value : createdBy, Label : 'Comprador Responsável' }
         ]
     }
 );
